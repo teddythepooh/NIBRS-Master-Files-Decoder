@@ -1,0 +1,18 @@
+segment_level_codes:
+  administrative_segment: '01'
+
+administrative_segment:
+  segment_level: [0, 2]
+  state_code: [2, 4]
+  ori: [4, 13]
+  incident_number: [13, 25]
+  incident_date: [25, 33]
+  report_date_indicator: [33, 34]
+  incident_date_hour: [34, 36]
+  total_offense_segments: [36, 38]
+  total_victim_segments: [38, 41]
+  total_offender_segments: [41, 43]
+  total_arrestee_segments: [43, 45]
+  city_submission: [45, 49]
+  cleared_exceptionally: [49, 50]
+  exceptional_clearance_date: [50, 58]
