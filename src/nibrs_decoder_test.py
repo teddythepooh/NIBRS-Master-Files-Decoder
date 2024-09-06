@@ -1,5 +1,4 @@
-import pandas as pd, numpy as np
-import argparse, logging, yaml
+import argparse, logging
 from pathlib import Path
 from time import perf_counter
 
@@ -19,9 +18,9 @@ def main(args: argparse.Namespace):
     
     nibrs_processor_tool = NIBRSDecoder(args.nibrs_master_file, col_specs_config)
     
-    test = nibrs_processor_tool.decode_segment(args.segment_name)
+    out_table = nibrs_processor_tool.decode_segment(args.segment_name)
     
-    test.to_csv(output_dir.joinpath("test.csv"), index = False)
+    out_table.to_parquet(output_dir.joinpath(f"{args.segment_name}.parquet"))
     
     end = perf_counter()
     
@@ -29,10 +28,10 @@ def main(args: argparse.Namespace):
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output_dir", default = "output")
-    parser.add_argument("--nibrs_master_file", "-f", default = "raw_data/2022_NIBRS_NATIONAL_MASTER_FILE_ENC.txt")
-    parser.add_argument("--config_file", default = "configuration/col_specs.yaml")
-    parser.add_argument("--segment_name", default = "administrative_segment")
+    parser.add_argument("--output_dir")
+    parser.add_argument("--nibrs_master_file", "-f", help = "path to the NIBRS fixed-length, ASCII text file")
+    parser.add_argument("--config_file", help = ".yaml file with segment_level_codes key, plus any segments of interest as keys")
+    parser.add_argument("--segment_name", help = "segment of interest to decode; it must be present as key in config_file")
     
     args = parser.parse_args()
     
