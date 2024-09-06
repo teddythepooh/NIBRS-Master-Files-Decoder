@@ -2,3 +2,4 @@ raw_data/
 output/
 test/
 __pycache__/
+private_config.yaml

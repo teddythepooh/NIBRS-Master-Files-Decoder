@@ -14,7 +14,7 @@ fi
 src=src/
 
 echo '(test) Decoding administrative segment...'
-python $src/test.py \
+python $src/nibrs_decoder_test.py \
     --output_dir=$output_dir \
     --nibrs_master_file=$nibrs_mf \
     --config_file=configuration/col_specs.yaml \
