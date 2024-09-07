@@ -20,6 +20,7 @@ src=src/
 segment_prefixes=(
     administrative 
     offense
+    arrestee
 )
 
 nibrs_segments=()

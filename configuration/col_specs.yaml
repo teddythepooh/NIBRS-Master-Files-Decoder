@@ -1,6 +1,7 @@
 segment_level_codes:
   administrative_segment: '01'
   offense_segment: '02'
+  arrestee_segment: '06'
 
 administrative_segment:
   segment_level: [0, 2]
@@ -42,3 +43,28 @@ offense_segment:
   type_weapon_force_involved3: [54, 56]
   automatic_weapon_indicator3: [56, 57]
   bias_motivation: [57, 59]
+
+arrestee_segment:
+  segment_level: [0, 2]
+  state_code: [2, 4]
+  ori: [4, 13]
+  incident_number: [13, 25]
+  incident_date: [25, 33]
+  arrestee_sequence_number: [33, 35]
+  arrest_transaction_number: [35, 47]
+  arrest_date: [47, 55]
+  type_of_arrest: [55, 56]
+  multiple_arrestee_segment_indicator: [56, 57]
+  ucr_arrest_offense_code: [57, 60]
+  type_weapon_involved1: [60, 62]
+  automatic_weapon_indicator1: [62, 63]
+  type_weapon_involved2: [63, 65]
+  automatic_weapon_indicator2: [65, 66]
+  age_of_arrestee: [66, 68]
+  sex_of_arrestee: [68, 69]
+  race_of_arrestee: [69, 70]
+  ethnicity_of_arrestee: [70, 71]
+  residence_status_of_arrestee: [71, 72]
+  disposition_arrestee_under_18: [72, 73]
+  
+

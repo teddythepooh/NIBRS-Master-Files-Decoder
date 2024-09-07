@@ -12,7 +12,8 @@ def main(args: argparse.Namespace):
     start = perf_counter()
     output_dir, logger = utils.create_output_dir_and_logger(output_dir_str = args.output_dir, log_file = f"{Path(__file__).stem}.log")
     
-    data_year = args.nibrs_master_file[0:4]
+    data_year = Path(args.nibrs_master_file).name[0:4]
+    
     if not data_year.isdigit():
         logger.warning("Double check args.nibrs_master_file. This text file's file name must be "
                        "prefixed with the year (e.g., 2022).")
@@ -33,10 +34,10 @@ def main(args: argparse.Namespace):
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output_dir")
+    parser.add_argument("--output_dir", "-o")
     parser.add_argument("--nibrs_master_file", "-f", help = "path to the NIBRS fixed-length, ASCII text file")
-    parser.add_argument("--config_file", help = ".yaml file with segment_level_codes key, plus any segments of interest as keys")
-    parser.add_argument("--segment_name", help = "segment of interest to decode; it must be present as key in config_file")
+    parser.add_argument("--config_file", "-c", help = ".yaml file with segment_level_codes key, plus any segments of interest as keys")
+    parser.add_argument("--segment_name", "-s", help = "segment of interest to decode; it must be present as key in config_file")
     
     args = parser.parse_args()
     
