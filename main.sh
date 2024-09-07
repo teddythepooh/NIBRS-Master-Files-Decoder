@@ -21,6 +21,7 @@ segment_prefixes=(
     administrative 
     offense
     arrestee
+    victim
 )
 
 nibrs_segments=()
@@ -39,4 +40,4 @@ done
 
 wait
 
-echo "Done. All segments have been decoded and export to $output_dir"
+echo "Done. All segments have been decoded and exported to $output_dir"
