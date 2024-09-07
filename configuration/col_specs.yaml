@@ -1,5 +1,6 @@
 segment_level_codes:
   administrative_segment: '01'
+  offense_segment: '02'
 
 administrative_segment:
   segment_level: [0, 2]
@@ -16,3 +17,28 @@ administrative_segment:
   city_submission: [45, 49]
   cleared_exceptionally: [49, 50]
   exceptional_clearance_date: [50, 58]
+
+offense_segment:
+  segment_level: [0, 2] 
+  state_code: [2, 4]
+  ori: [4, 13]
+  incident_number: [13, 25]
+  incident_date: [25, 33]
+  ucr_offense_code: [33, 36]
+  offense_attempted_or_completed: [36, 37]
+  offender_suspected_of_using1: [37, 38]
+  offender_suspected_of_using2: [38, 39]
+  offender_suspected_of_using3: [39, 40]
+  location_type: [40, 42]
+  num_premises_entered: [42, 44]
+  method_of_entry: [44, 45]
+  type_of_criminal_activity1: [45, 46]
+  type_of_criminal_activity2: [46, 47]
+  type_of_criminal_activity3: [47, 48]
+  type_weapon_force_involved1: [48, 50]
+  automatic_weapon_indicator1: [50, 51]
+  type_weapon_force_involved2: [51, 53]
+  automatic_weapon_indicator2: [53, 54]
+  type_weapon_force_involved3: [54, 56]
+  automatic_weapon_indicator3: [56, 57]
+  bias_motivation: [57, 59]

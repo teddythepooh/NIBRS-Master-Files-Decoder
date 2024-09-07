@@ -15,4 +15,4 @@ Through the FBI Crime Data Explorer (CDE), the FBI releases National Incident-Ba
 In the command line, navigate to `$dir`: the parent directory of this pipeline, as in the path of this README. Then,
 1. Download the NIBRS zipped file locally (i.e., `nibrs-2022.zip`), then store it in `$dir/raw_data/`.
 2. Activate virtual environment.
-3. Run `main.sh`.
+3. Run `bash main.sh`.

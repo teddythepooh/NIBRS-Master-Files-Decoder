@@ -12,6 +12,11 @@ def main(args: argparse.Namespace):
     start = perf_counter()
     output_dir, logger = utils.create_output_dir_and_logger(output_dir_str = args.output_dir, log_file = f"{Path(__file__).stem}.log")
     
+    data_year = args.nibrs_master_file[0:4]
+    if not data_year.isdigit():
+        logger.warning("Double check args.nibrs_master_file. This text file's file name must be "
+                       "prefixed with the year (e.g., 2022).")
+        
     logger.info(f"Decoding {args.segment_name}...")
     
     col_specs_config = utils.load_yaml(args.config_file)
@@ -20,7 +25,7 @@ def main(args: argparse.Namespace):
     
     out_table = nibrs_processor_tool.decode_segment(args.segment_name)
     
-    out_table.to_parquet(output_dir.joinpath(f"{args.segment_name}.parquet"))
+    out_table.to_parquet(output_dir.joinpath(f"{args.segment_name}_{data_year}.parquet"))
     
     end = perf_counter()
     
