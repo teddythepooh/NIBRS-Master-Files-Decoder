@@ -41,6 +41,6 @@ Note I set up my bash script to send the decoded data directly to my S3 bucket, 
 ### AWS Resources
 This section is where I will store my AWS learning resources for future reference.
 1. AWS S3 pricing: https://aws.amazon.com/s3/pricing/
-2. IAM user vs role: https://stackoverflow.com/questions/46199680/difference-between-iam-role-and-iam-user-in-aws
-3. AWS S3 intro: https://www.youtube.com/watch?v=tfU0JEZjcsg
-4. how to upload pandas tables as parquet files to AWS S3 bucket: https://stackoverflow.com/questions/53416226/how-to-write-parquet-file-from-pandas-dataframe-in-s3-in-python
+2. AWS S3 intro: https://www.youtube.com/watch?v=tfU0JEZjcsg
+3. IAM user vs role: https://stackoverflow.com/questions/46199680/difference-between-iam-role-and-iam-user-in-aws
+4. how to upload pandas tables as parquet files to AWS S3 bucket: https://stackoverflow.com/questions/52336902/what-is-the-difference-between-s3-client-upload-file-and-s3-client-upload-file
