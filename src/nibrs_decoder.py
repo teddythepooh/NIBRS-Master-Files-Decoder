@@ -4,9 +4,9 @@ from io import StringIO
 class NIBRSDecoder:
     def __init__(self, nibrs_master_file: str, col_specs: dict):
         '''
-        self.nibrs_master_file: the path to the NIBRS fixed-length, ASCII text file for some year
+        nibrs_master_file: the path to the NIBRS fixed-length, ASCII text file for some year
         
-        self.col_specs: a dictionary that defines the segment names' levels, along with their
+        col_specs: a dictionary that defines the segment names' levels, along with their
         column widths and column names, which should look something like in the .yaml file
         
         ------------------- an example of self.col_specs (as a .yaml file)
