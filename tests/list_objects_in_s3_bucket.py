@@ -12,8 +12,8 @@ def main():
     
     s3_client = aws_s3_tool.create_s3_client()
     
-    aws_s3_tool.list_objects_in_s3_bucket(client = s3_client, bucket_name = config["bucket_name"])
-    aws_s3_tool.list_objects_in_s3_bucket(client = s3_client, bucket_name = config["bucket_name"], return_full_dict = True)
+    aws_s3_tool.print_objects_in_s3_bucket(client = s3_client, bucket_name = config["bucket_name"])
+    aws_s3_tool.print_objects_in_s3_bucket(client = s3_client, bucket_name = config["bucket_name"], return_full_dict = True)
     
     print(aws_s3_tool.__doc__)
     

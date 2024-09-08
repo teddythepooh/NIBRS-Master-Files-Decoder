@@ -29,10 +29,10 @@ class AWS_S3:
         else:
             raise KeyError("Instance has invalid credentials_config.")
 
-    def list_objects_in_s3_bucket(self, 
+    def print_objects_in_s3_bucket(self, 
                                   client: BaseClient, 
                                   bucket_name: str,
-                                  return_full_dict: bool = False) -> None:
+                                  print_full_dict: bool = False) -> None:
         '''
         return_full_dict: whether or not to print the full nested dictionary from 
         client.list_objects_v2(Bucket = bucket_name) or just the object names + storage size
@@ -41,7 +41,7 @@ class AWS_S3:
         '''
         full_dict = client.list_objects_v2(Bucket = bucket_name)
         
-        if return_full_dict:
+        if print_full_dict:
             print(full_dict)
         else:
             try:
