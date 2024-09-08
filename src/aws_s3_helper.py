@@ -67,6 +67,7 @@ class AWS_S3:
         parquet file (if how is 'parquet') or csv file (if how is 'csv')
         '''
         # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/upload_fileobj.html
+        # https://stackoverflow.com/questions/53416226/how-to-write-parquet-file-from-pandas-dataframe-in-s3-in-python
         
         if how == "parquet":
             out_buffer = BytesIO()
