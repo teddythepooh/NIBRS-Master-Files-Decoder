@@ -31,13 +31,15 @@ done
 
 for segment in ${nibrs_segments[@]}; do
     echo "Decoding $segment..."
-    python $src/nibrs_decoder_test.py \
+    python decode_segments.py \
         --output_dir=$output_dir \
         --nibrs_master_file=$nibrs_mf \
         --config_file=configuration/col_specs.yaml \
-        --segment_name=$segment &
+        --private_config_file=configuration/private_config.yaml \
+        --segment_name=$segment \
+        --to_aws_s3
 done
 
 wait
 
-echo "Done. All segments have been decoded and exported to $output_dir"
+echo "Done. All segments have been decoded."
