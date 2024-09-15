@@ -1,0 +1,10 @@
+postgresql:
+  credentials:
+    host: localhost
+    dbname: nibrs
+    user: postgres
+    port: 5432
+  schemas:
+    - raw
+    - cleaned
+    - crosswalks

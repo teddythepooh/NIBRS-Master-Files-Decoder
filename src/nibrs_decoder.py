@@ -9,7 +9,7 @@ class NIBRSDecoder:
         col_specs: a dictionary that defines the segment names' levels, along with their
         column widths and column names, which should look something like in the .yaml file
         
-        ------------------- an example of self.col_specs (as a .yaml file)
+        ------------------- an example of col_specs (as a .yaml file)
             segment_level_codes:
                  administrative_segment: '01'
 
