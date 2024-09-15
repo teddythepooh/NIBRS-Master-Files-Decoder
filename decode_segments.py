@@ -37,11 +37,9 @@ def main(args: argparse.Namespace) -> None:
         private_config = utils.load_yaml(args.private_config_file)
         
         AWS_S3_tool = AWS_S3(private_config["credentials"])
-        s3_client = AWS_S3_tool.create_s3_client()
         
         AWS_S3_tool.upload_table_to_s3_bucket(table = out_table,
                                               how = "parquet",
-                                              client = s3_client,
                                               bucket_name = private_config["bucket_name"],
                                               object_name = out_name)
     else:

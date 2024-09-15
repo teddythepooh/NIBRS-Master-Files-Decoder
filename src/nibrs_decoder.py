@@ -66,7 +66,7 @@ class NIBRSDecoder:
             for line in filtered_lines:
                 segment_as_text.write(line)
             
-            segment_as_text.seek(0) # to reset the segment_as_text's pointer to the very beginning after populating it with filtered_lines
+            segment_as_text.seek(0) # to reset the pointer to the very beginning
             
             out_table = pd.read_fwf(segment_as_text, colspecs = col_specs, names = col_names)
 

@@ -1,7 +1,9 @@
 import boto3
-from botocore.client import BaseClient #https://stackoverflow.com/questions/51118767/what-is-boto3-clients3-returning
+from botocore.client import BaseClient
 import pandas as pd
 from io import BytesIO, StringIO
+
+# https://stackoverflow.com/questions/53416226/how-to-write-parquet-file-from-pandas-dataframe-in-s3-in-python
 
 class AWS_S3:
     '''
@@ -62,9 +64,6 @@ class AWS_S3:
         uploads a pandas table in-memory onto an S3 bucket, either as a 
         parquet file (if how is 'parquet') or csv file (if how is 'csv')
         '''
-        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/upload_fileobj.html
-        # https://stackoverflow.com/questions/53416226/how-to-write-parquet-file-from-pandas-dataframe-in-s3-in-python
-        
         if how == "parquet":
             out_buffer = BytesIO()
             table.to_parquet(out_buffer, index = False, engine = "pyarrow")
