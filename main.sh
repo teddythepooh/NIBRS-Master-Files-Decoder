@@ -36,7 +36,8 @@ for segment in ${nibrs_segments[@]}; do
         --nibrs_master_file=$nibrs_mf \
         --config_file=configuration/col_specs.yaml \
         --private_config_file=configuration/private_config.yaml \
-        --segment_name=$segment
+        --segment_name=$segment \
+        --to_aws_s3
 done
 
 wait
