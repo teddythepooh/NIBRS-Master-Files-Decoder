@@ -4,16 +4,17 @@ from pathlib import Path
 
 from time import perf_counter
 
-from src import utils
-from src import NIBRSDecoder
-from src import AWS_S3
+from utils import general_utils, NIBRSDecoder, AWS_S3
 
 def main(args: argparse.Namespace) -> None:
     output_dir: Path
     logger: logging.Logger
     
     start = perf_counter()
-    output_dir, logger = utils.create_output_dir_and_logger(output_dir_str = args.output_dir, log_file = f"{Path(__file__).stem}.log")
+    output_dir, logger = general_utils.create_output_dir_and_logger(
+        output_dir_str = args.output_dir, 
+        log_file = f"{Path(__file__).stem}.log"
+        )
         
     data_year = Path(args.nibrs_master_file).name[0:4]
     
@@ -23,7 +24,7 @@ def main(args: argparse.Namespace) -> None:
         
     logger.info(f"Decoding {args.segment_name}...")
     
-    col_specs_config = utils.load_yaml(args.config_file)
+    col_specs_config = general_utils.load_yaml(args.config_file)
     
     nibrs_processor_tool = NIBRSDecoder(args.nibrs_master_file, col_specs_config)
     
@@ -34,7 +35,7 @@ def main(args: argparse.Namespace) -> None:
     logger.info("Exporting...")
     if args.to_aws_s3:
         logger.info("to_aws_s3 was toggled: sending decoded segment directly to s3 bucket...")
-        private_config = utils.load_yaml(args.private_config_file)
+        private_config = general_utils.load_yaml(args.private_config_file)
         
         AWS_S3_tool = AWS_S3(private_config["credentials"])
         

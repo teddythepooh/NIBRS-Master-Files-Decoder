@@ -1,15 +1,14 @@
 import psycopg2
 import argparse
-from src import utils
+from utils import general_utils
 
 # https://www.psycopg.org/docs/cursor.html
 # https://www.psycopg.org/docs/connection.html
 
-# https://stackoverflow.com/questions/44511958/python-postgresql-create-database-if-not-exists-is-error
 # https://stackoverflow.com/questions/77160257/postgresql-create-database-cannot-run-inside-a-transaction-block
 
 def main(args: argparse.Namespace) -> None:
-    config = utils.load_yaml(args.config_file)
+    config = general_utils.load_yaml(args.config_file)
     
     if "postgresql" in config.keys():
         postgres = config["postgresql"]
