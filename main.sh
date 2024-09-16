@@ -31,7 +31,7 @@ done
 
 for segment in ${nibrs_segments[@]}; do
     echo "Decoding $segment..."
-    python decode_segments.py \
+    python src/decode_segments.py \
         --output_dir=$output_dir \
         --nibrs_master_file=$nibrs_mf \
         --config_file=configuration/col_specs.yaml \

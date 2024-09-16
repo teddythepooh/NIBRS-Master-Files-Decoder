@@ -9,7 +9,7 @@ class NIBRSDecoder:
         col_specs: a dictionary that defines the segment names' levels, along with their
         column widths and column names, which should look something like in the .yaml file
         
-        ------------------- an example of self.col_specs (as a .yaml file)
+        ------------------- an example of col_specs (as a .yaml file)
             segment_level_codes:
                  administrative_segment: '01'
 
@@ -66,7 +66,7 @@ class NIBRSDecoder:
             for line in filtered_lines:
                 segment_as_text.write(line)
             
-            segment_as_text.seek(0) # to reset the segment_as_text's pointer to the very beginning after populating it with filtered_lines
+            segment_as_text.seek(0) # to reset the pointer to the very beginning
             
             out_table = pd.read_fwf(segment_as_text, colspecs = col_specs, names = col_names)
 

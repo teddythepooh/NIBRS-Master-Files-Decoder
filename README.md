@@ -1,7 +1,7 @@
 # NIBRS Master Files Decoder 
 
 ## Requirements
-- Python 3.11.3; `configuration/requirements.txt`
+- Python 3.11.3; `requirements.yaml`
 - AWS S3 bucket
 
 Through the FBI Crime Data Explorer (CDE), the FBI releases National Incident-Based Reporting System (NIBRS) data every year dating back to 1991. These so-called master files are the most comprehensive and centralized resource for *incident-level* public safety data, including but not limited to crime; arrest; and victim segments for over 13,000 law enforcement agencies across the United States. The data is in a fixed-length ASCII text format: every n characters is a distinct column, with the first two characters delineating between the different data segments. There exists one master file per year. The schemas for each segment can be found in the FBI CDE (see the yellow circle in the screenshot below): they are enumerated in a poorly-scanned document from 1995. For 2023, the data for which is to be released some time in fall 2024, the FBI has released the documentation as a proper .pdf entitled "2023.0 NIBRS Technical Specification:" https://le.fbi.gov/informational-tools/ucr/ucr-technical-specifications-user-manuals-and-data-tools. 
@@ -48,5 +48,5 @@ Note that I set up my bash script to send the decoded data directly to my S3 buc
 This section is where I will store my AWS learning resources for future reference.
 1. AWS S3 pricing: https://aws.amazon.com/s3/pricing/
 2. AWS S3 intro: https://www.youtube.com/watch?v=tfU0JEZjcsg
-3. IAM user vs role: https://stackoverflow.com/questions/46199680/difference-between-iam-role-and-iam-user-in-aws
+3. IAM: https://stackoverflow.com/questions/46199680/difference-between-iam-role-and-iam-user-in-aws
 4. How to SSH into EC2 from VS Code: https://stackoverflow.com/questions/56996544/vs-code-remote-ssh-to-aws-instance
