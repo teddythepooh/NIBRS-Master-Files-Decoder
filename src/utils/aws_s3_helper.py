@@ -39,7 +39,8 @@ class AWS_S3:
         else:
             raise KeyError("Instance has invalid credentials_config.")
 
-    def _build_s3_uri(self, bucket_name: str, object_name: str) -> str:
+    @staticmethod
+    def _build_s3_uri(bucket_name: str, object_name: str) -> str:
         return f"s3://{bucket_name}/{object_name}"
     
     def _build_s3fs_file_system(self) -> s3fs.S3FileSystem:
@@ -52,6 +53,18 @@ class AWS_S3:
                 )
         
         return fs
+
+    def read_table_from_s3_bucket(self, bucket_name: str, object_name: str) -> pl.DataFrame:
+        if object_name.endswith("parquet"):
+            s3_uri = AWS_S3._build_s3_uri(bucket_name = bucket_name, object_name = object_name)
+            fs = self._build_s3fs_file_system()
+
+            with fs.open(s3_uri, "rb") as file:
+                out_table = pl.read_parquet(file)
+                
+            return out_table.head()
+        else:
+            raise ValueError("This method only supports reading parquet tables at this time.")
 
     def print_objects_in_s3_bucket(self, bucket_name: str, print_full_dict: bool = False) -> None:
         '''
@@ -72,18 +85,6 @@ class AWS_S3:
                     print(f"File Name: {file_name}, Size: {file_size_as_mb} MB")
             except KeyError:
                 raise KeyError(f"No objects found in {bucket_name}.")
-
-    def read_table_from_s3_bucket(self, bucket_name: str, object_name: str) -> pl.DataFrame:
-        if object_name.endswith("parquet"):
-            s3_uri = self._build_s3_uri(bucket_name = bucket_name, object_name = object_name)
-            fs = self._build_s3fs_file_system()
-
-            with fs.open(s3_uri, "rb") as file:
-                out_table = pl.read_parquet(file)
-                
-            return out_table.head()
-        else:
-            raise ValueError("This method only supports reading parquet tables at this time.")
 
     def upload_table_to_s3_bucket(self, 
                                   table: pd.DataFrame, 
