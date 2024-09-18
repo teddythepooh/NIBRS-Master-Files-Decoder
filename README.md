@@ -17,7 +17,12 @@ Through the FBI Crime Data Explorer (CDE), the FBI releases National Incident-Ba
 In my pursuit of these goals, I hope to
 1. build data engineering skills through an end-to-end ETL pipeline;
 2. get comfortable with the AWS ecosystem, both interactively and from Python;
-3. and expand my PostgreSQL knowledge, specifically by interacting with a database through SQLAlchemy.
+3. and expand my PostgreSQL knowledge, specifically by interacting with a database through SQLAlchemy (and psycopg2). I prefer to use psycopg2 only to the extent possible, but some pandas/polars methods expect a SQLAlchemy connectcion to interact with the database.
+
+## Project Folder Structure
+1. `src/` is the bread-and-butter of this pipeline. The scripts in this directory deploys the various mechanisms of my ETL pipeline. The modules I developed---and continue to refine---to abstract away the core functionalities can be found in `src/utils/`, including but not limited to the decoder mechanism; and interacting with AWS and PostgreSQL from Python. 
+2. `configuration/` is simply where I store configurable parameters as .yaml files, with some of them not visible in this repo if it contains any secrets (e.g., AWS secrets to access my S3 bucket).
+3. `fbi_api_wrapper/` *will* be a Python wrapper for the FBI Crime Data API, from which I will obtain agency information (e.g., agency name, population, etc.). This is technically available in the NIBRS master files from the so-called batch header segment, but the API exports are orders of magnitude more standardized and reliable. In that regard, the motivation of decoding the NIBRS master file is the fact that their aggregation is at the incident-level; in contrast, the FBI API's smallest aggregation is at the annual agency level.
 
 ![Screenshot 2024-09-05 011353](https://github.com/user-attachments/assets/6a2cb0be-3eb4-43df-893a-8c4768189c79)
 
@@ -38,7 +43,7 @@ credentials:
 
 Note that I set up my bash script to send the decoded data directly to my S3 bucket `bucket_name`. However, if you would like to store them locally, delete line 40 in `main.sh` (i.e., the `to_aws_s3` flag) before proceeding.
 
-3. Activate virtual environment from `configuration/requirements.txt`. In the future, I aim to learn Docker because it is a pain to recreate my environment in EC2. EC2 instances currently come with Python 3.9 by default at the time that I am writing this, but I am using Python 3.11.
+3. Activate virtual environment from `requirements.yaml`. In the future, I aim to learn Docker because it is a pain to recreate my environment in EC2. EC2 instances currently come with Python 3.9 by default at the time that I am writing this, but I am using Python 3.11.
 4. Run `bash main.sh`.
 ![image](https://github.com/teddythepooh/NIBRS-Master-Files-Decoder/blob/aws_integration/images/nibrs_decoder_implementation.png)
 5. The decoded data segments are now in Amazon S3.
