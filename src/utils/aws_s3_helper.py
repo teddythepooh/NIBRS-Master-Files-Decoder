@@ -62,7 +62,7 @@ class AWS_S3:
             with fs.open(s3_uri, "rb") as file:
                 out_table = pl.read_parquet(file)
                 
-            return out_table.head()
+            return out_table
         else:
             raise ValueError("This method only supports reading parquet tables at this time.")
 

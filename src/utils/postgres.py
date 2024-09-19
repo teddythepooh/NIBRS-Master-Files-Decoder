@@ -90,10 +90,11 @@ class Postgres:
             
     def _build_sqlalchemy_url(self) -> sqlalchemy.URL:
         credentials = self.config["credentials"]
-        url = sqlalchemy.URL("postgresql+psycopg2",
-                             username = credentials["user"],
-                             host = credentials["host"],
-                             database = credentials["dbname"])
+        url = sqlalchemy.URL.create("postgresql+psycopg2",
+                                    username = credentials["user"],
+                                    port = credentials["port"],
+                                    host = credentials["host"],
+                                    database = credentials["dbname"])
         
         return url
     
