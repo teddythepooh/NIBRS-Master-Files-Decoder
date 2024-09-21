@@ -1,8 +1,23 @@
 import argparse
-from utils import general_utils, Postgres
+from utils import general_utils
+from db_design import Postgres
 
-def main(args: argparse.Namespace) -> None:
-    config = general_utils.load_yaml(args.config_file)
+def main(config_file: str) -> None:
+    '''
+    config_file: Path to yaml file of the following format
+    
+        postgresql:
+            credentials:
+                host: localhost
+                dbname: nibrs
+                user: postgres
+                port: 5432
+            schemas:
+                - raw
+                - cleaned
+                - crosswalks
+    '''
+    config = general_utils.load_yaml(config_file)
     
     try:
         db_config = Postgres(config["postgresql"])
@@ -13,11 +28,8 @@ def main(args: argparse.Namespace) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config_file", "-c",
-                        help = (".yaml file with 'postgresql' key, containing a 'credentials' key:value pair "
-                                "for connecting to the database (including creating it if necessary) and "
-                                "a 'schemas' list for the list of desired schemas"))
+    parser.add_argument("-c")
     
     args = parser.parse_args()
     
-    main(args)
+    main(args.c)
