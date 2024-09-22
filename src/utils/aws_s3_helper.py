@@ -1,9 +1,18 @@
 import boto3
 from botocore.client import BaseClient
+import s3fs
 import pandas as pd
+import polars as pl
 from io import BytesIO, StringIO
 
 # https://stackoverflow.com/questions/53416226/how-to-write-parquet-file-from-pandas-dataframe-in-s3-in-python
+# https://stackoverflow.com/questions/75115246/with-python-is-there-a-way-to-load-a-polars-dataframe-directly-into-an-s3-bucke
+
+import warnings
+warnings.filterwarnings(
+    "ignore", 
+    message = "Polars found a filename" #https://stackoverflow.com/questions/75690784/polars-for-python-how-to-get-rid-of-ensure-you-pass-a-path-to-the-file-instead
+    )
 
 class AWS_S3:
     '''
@@ -30,9 +39,34 @@ class AWS_S3:
         else:
             raise KeyError("Instance has invalid credentials_config.")
 
-    def print_objects_in_s3_bucket(self, 
-                                   bucket_name: str,
-                                   print_full_dict: bool = False) -> None:
+    @staticmethod
+    def _build_s3_uri(bucket_name: str, object_name: str) -> str:
+        return f"s3://{bucket_name}/{object_name}"
+    
+    def _build_s3fs_file_system(self) -> s3fs.S3FileSystem:
+        '''
+        allows me to ingest files from my s3 bucket
+        '''
+        fs = s3fs.S3FileSystem(
+                key = self.credentials_config["aws_access_key_id"],
+                secret = self.credentials_config["aws_secret_access_key"]
+                )
+        
+        return fs
+
+    def read_table_from_s3_bucket(self, bucket_name: str, object_name: str) -> pl.DataFrame:
+        if object_name.endswith("parquet"):
+            s3_uri = AWS_S3._build_s3_uri(bucket_name = bucket_name, object_name = object_name)
+            fs = self._build_s3fs_file_system()
+
+            with fs.open(s3_uri, "rb") as file:
+                out_table = pl.read_parquet(file)
+                
+            return out_table
+        else:
+            raise ValueError("This method only supports reading parquet tables at this time.")
+
+    def print_objects_in_s3_bucket(self, bucket_name: str, print_full_dict: bool = False) -> None:
         '''
         print_full_dict: whether or not to print the full nested dictionary from 
         client.list_objects_v2(Bucket = bucket_name) or just the object names + storage size
@@ -51,7 +85,7 @@ class AWS_S3:
                     print(f"File Name: {file_name}, Size: {file_size_as_mb} MB")
             except KeyError:
                 raise KeyError(f"No objects found in {bucket_name}.")
-    
+
     def upload_table_to_s3_bucket(self, 
                                   table: pd.DataFrame, 
                                   how: str, 

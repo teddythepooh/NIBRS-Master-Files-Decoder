@@ -5,13 +5,14 @@ channels:
 dependencies:
   - python=3.11.3
   - pip=24.2
-  - pyyaml=6.0.2
-  - pyarrow=17.0.0
-  - boto3=1.35.12
-  - ipykernel=6.29.5
+  - pandas=2.2.2
   - numpy=2.1.1
-  - pandas=2.2.2  
-  - sqlalchemy=2.0.34
+  - ipykernel=6.29.5
+  - boto3=1.35.12
+  - s3fs=2024.9.0
   - psycopg2=2.9.9
+  - sqlalchemy=2.0.34
+  - pyarrow=17.0.0
+  - pyyaml=6.0.2
   - pip:
       - polars==1.7.1
