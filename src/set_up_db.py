@@ -1,17 +1,17 @@
 import argparse
 from utils import general_utils
-from db_design import Postgres
+from db_design import Postgres, raw_tables
 
 def main(config_file: str) -> None:
     '''
-    config_file: Path to yaml file of the following format
+    config_file: Path to .yaml file of the following format
     
         postgresql:
             credentials:
-                host: localhost
-                dbname: nibrs
-                user: postgres
-                port: 5432
+                host: xxxxxxx
+                dbname: xxxxxxxx
+                user: xxxxxxx
+                port: xxxxxxxxxx
             schemas:
                 - raw
                 - cleaned
@@ -21,10 +21,16 @@ def main(config_file: str) -> None:
     
     try:
         db_config = Postgres(config["postgresql"])
+        db_config.initialize_database()
     except KeyError:
         raise KeyError("args.config_file has no 'postgresql' key.")
     
-    db_config.initialize_database()
+    sqlalchemy_engine = db_config.create_sqlalchemy_engine()
+    
+    #for table_name, table in raw_tables.Base.metadata.tables.items():
+        #print(f"Table: {table_name}, Schema: {table.schema}")
+
+    raw_tables.Base.metadata.create_all(bind = sqlalchemy_engine)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
