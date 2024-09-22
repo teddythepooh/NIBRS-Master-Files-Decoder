@@ -29,6 +29,7 @@ def main(args: argparse.Namespace) -> None:
     nibrs_processor_tool = NIBRSDecoder(args.nibrs_master_file, col_specs_config)
     
     out_table = nibrs_processor_tool.decode_segment(args.segment_name)
+    out_table["db_id"] = [f"{data_year}_{i}" for i in out_table.index]
     
     out_name = f"{args.segment_name}_{data_year}.parquet"
     
