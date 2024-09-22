@@ -66,7 +66,7 @@ class Postgres:
                     cur.execute(f"create database {db_name}")
 
             # CREATE SCHEMAS   
-            nibrs_db_connection = connection = self._create_psycopg2_connection()
+            nibrs_db_connection = self._create_psycopg2_connection()
             nibrs_db_connection.autocommit = True
             
             with nibrs_db_connection as con:
