@@ -1,7 +1,7 @@
 from sqlalchemy import MetaData, Integer, String
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 
-raw_metadata = MetaData(schema = "raaw")
+raw_metadata = MetaData(schema = "raw")
 
 class Base(DeclarativeBase):
     metadata = raw_metadata
