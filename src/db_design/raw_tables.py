@@ -1,7 +1,7 @@
 from sqlalchemy import MetaData, Integer, String
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 
-raw_metadata = MetaData(schema = "raw")
+raw_metadata = MetaData(schema = "raaw")
 
 class Base(DeclarativeBase):
     metadata = raw_metadata
@@ -9,7 +9,6 @@ class Base(DeclarativeBase):
 class Administrative(Base):
     __tablename__ = "administrative_segment"
     
-    db_id = mapped_column(String, primary_key = True)
     segment_level = mapped_column(String(2))
     state_code = mapped_column(String(2))
     ori = mapped_column(String(9))
@@ -24,11 +23,11 @@ class Administrative(Base):
     city_submission = mapped_column(String(4))
     cleared_exceptionally = mapped_column(String(1))
     exceptional_clearance_date = mapped_column(Integer)
+    db_id = mapped_column(String, primary_key = True)
     
 class Offense(Base):
     __tablename__ = "offense_segment"
     
-    db_id = mapped_column(String, primary_key = True)
     segment_level = mapped_column(String(2))
     state_code = mapped_column(String(2))
     ori = mapped_column(String(9))
@@ -52,11 +51,11 @@ class Offense(Base):
     type_weapon_force_involved3 = mapped_column(String(2))
     automatic_weapon_indicator3 = mapped_column(String(1))
     bias_motivation = mapped_column(String(2))
+    db_id = mapped_column(String, primary_key = True)
     
 class Victim(Base):
     __tablename__ = "victim_segment"
     
-    db_id = mapped_column(String, primary_key = True)
     segment_level = mapped_column(String(2))
     state_code = mapped_column(String(2))
     ori = mapped_column(String(9))
@@ -98,11 +97,11 @@ class Victim(Base):
     victim_relationship_to_offender8 = mapped_column(String(4))
     victim_relationship_to_offender9 = mapped_column(String(4))
     victim_relationship_to_offender10 = mapped_column(String(4))
+    db_id = mapped_column(String, primary_key = True)
     
 class Arrestee(Base):
     __tablename__ = "arrestee_segment"
     
-    db_id = mapped_column(String, primary_key = True)
     segment_level = mapped_column(String(2))
     state_code = mapped_column(String(2))
     ori = mapped_column(String(9))
@@ -124,3 +123,4 @@ class Arrestee(Base):
     ethnicity_of_arrestee = mapped_column(String(1))
     residence_status_of_arrestee = mapped_column(String(1))
     disposition_arrestee_under_18 = mapped_column(String(1))
+    db_id = mapped_column(String, primary_key = True)

@@ -1,41 +1,49 @@
 import argparse
 from utils import general_utils
 from db_design import Postgres, raw_tables
+from pathlib import Path
 
-def main(config_file: str) -> None:
+def main(config_file: dict) -> None:
     '''
-    config_file: Path to .yaml file of the following format
-    
-        postgresql:
-            credentials:
-                host: xxxxxxx
-                dbname: xxxxxxxx
-                user: xxxxxxx
-                port: xxxxxxxxxx
-            schemas:
-                - raw
-                - cleaned
-                - crosswalks
+    creates a postgres db called config_file["postgresql"]["credentials"]["db_name"], if one doesn't exist, 
+    along with the specified schemas in config_file["postgresql"]["schemas"] and then creates tables in the raw 
+    schema based on the metadata found in ./src/db_design/raw_tables.py
     '''
-    config = general_utils.load_yaml(config_file)
+    postgres_config = config_file["postgresql"]
     
+    logs_dir = Path("logs")
+    logs_dir.mkdir(exist_ok = True)
+    logging = general_utils.create_logger(log_file = logs_dir.joinpath(f"{Path(__file__).stem}.log"))
+    
+    logging.info("Creating database and schemas")
     try:
-        db_config = Postgres(config["postgresql"])
+        db_config = Postgres(credentials = postgres_config["credentials"], 
+                             schemas = postgres_config["schemas"])
         db_config.initialize_database()
     except KeyError:
-        raise KeyError("args.config_file has no 'postgresql' key.")
+        raise KeyError("config_file must have 'credentials' and 'schemas' keys.")
     
-    sqlalchemy_engine = db_config.create_sqlalchemy_engine()
-    
-    #for table_name, table in raw_tables.Base.metadata.tables.items():
-        #print(f"Table: {table_name}, Schema: {table.schema}")
+    logging.info("Creating tables in raw schema...")
+    if raw_tables.Base.metadata.schema in postgres_config["schemas"]:
+        sqlalchemy_engine = db_config.create_sqlalchemy_engine()
+        raw_tables.Base.metadata.create_all(bind = sqlalchemy_engine)
+    else:
+        message = (f"Please make sure that '{raw_tables.Base.metadata.schema}' schema "
+                   "is defined in config_file['postgresql']['schemas'].")
+        logging.error(message)
+        raise Exception(message)
 
-    raw_tables.Base.metadata.create_all(bind = sqlalchemy_engine)
+    logging.info("Done.")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-c")
+    parser = argparse.ArgumentParser(description = main.__doc__)
+    parser.add_argument("-c", help = (
+        "a .yaml file with a 'postgresql' key, which contains a key:value pair called 'credentials' "
+        "with host/dbname/user/port keys and a list of desired schemas called 'schemas'"
+        ))
     
     args = parser.parse_args()
     
-    main(args.c)
+    config = general_utils.load_yaml(args.c)
+    
+    main(config_file = config)
