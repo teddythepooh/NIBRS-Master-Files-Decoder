@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - make=4.4.1
   - python=3.11.3
   - pip=24.2
   - pandas=2.2.2
