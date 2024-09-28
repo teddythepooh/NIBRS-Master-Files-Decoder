@@ -1,3 +1,4 @@
+# ec2 setup
 sudo apt-get install git
 
 mkdir -p ~/miniconda3
