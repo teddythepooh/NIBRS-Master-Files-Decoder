@@ -1,5 +1,6 @@
 import boto3
 from botocore.client import BaseClient
+from botocore.exceptions import UnknownServiceError
 import s3fs
 import pandas as pd
 import polars as pl
@@ -14,30 +15,31 @@ warnings.filterwarnings(
     message = "Polars found a filename" #https://stackoverflow.com/questions/75690784/polars-for-python-how-to-get-rid-of-ensure-you-pass-a-path-to-the-file-instead
     )
 
-class AWS_S3:
-    '''
-    For all methods that contain an object_name arg, assume that it is the name of the object in your S3 bucket.
-    For all methods that contain a bucket_name arg, assume that it is the name of the S3 bucket.
-    '''
-    def __init__(self, credentials_config: dict):
-        '''
-        credentials_config: a dictionary with region_name, aws_access_key_id, and aws_secret_access_key keys
+class AWSBase:
+    def __init__(self, region_name: str, aws_access_key_id: str, aws_secret_access_key: str):
+        self.region_name = region_name
+        self.aws_access_key_id = aws_access_key_id
+        self.aws_secret_access_key = aws_secret_access_key
         
-        You can obtain the latter two keys by creating an IAM user with access to your S3 Bucket;
-        I provisioned mine with AdministratorAccess. You can also use your root user credentials,
-        but AWS S3 cautions against that practice as do other online sources.
-        '''
-        self.credentials_config = credentials_config
+    def _create_credentials_dict(self) -> dict:
+        credentials = {
+            "region_name": self.region_name,
+            "aws_access_key_id": self.aws_access_key_id,
+            "aws_secret_access_key": self.aws_secret_access_key
+        }
         
-    def _is_valid_credentials_config(self) -> bool:
-        return set(self.credentials_config.keys()) == {"region_name", "aws_access_key_id", "aws_secret_access_key"}
-    
-    def _create_s3_client(self) -> BaseClient:
-        if self._is_valid_credentials_config():
-            client = boto3.client("s3", **self.credentials_config)
+        return credentials
+        
+    def _create_client(self, service: str) -> BaseClient:
+        try:
+            client = boto3.client(service, **self._create_credentials_dict())
             return client
-        else:
-            raise KeyError("Instance has invalid credentials_config.")
+        except UnknownServiceError:
+            raise ValueError(f"Service '{service}' is invalid. AWS client could not be created.")
+
+class AmazonS3(AWSBase):
+    def __init__(self, region_name: str, aws_access_key_id: str, aws_secret_access_key: str):
+        super().__init__(region_name, aws_access_key_id, aws_secret_access_key)
 
     @staticmethod
     def _build_s3_uri(bucket_name: str, object_name: str) -> str:
@@ -47,21 +49,19 @@ class AWS_S3:
         '''
         allows me to ingest files from my s3 bucket
         '''
-        fs = s3fs.S3FileSystem(
-                key = self.credentials_config["aws_access_key_id"],
-                secret = self.credentials_config["aws_secret_access_key"]
-                )
-        
-        return fs
+        return s3fs.S3FileSystem(key = self.aws_access_key_id, secret = self.aws_secret_access_key)
 
     def read_table_from_s3_bucket(self, bucket_name: str, object_name: str) -> pl.DataFrame:
+        '''
+        ingests a parquet file from s3 bucket as a polars dataframe
+        '''
         if object_name.endswith("parquet"):
-            s3_uri = AWS_S3._build_s3_uri(bucket_name = bucket_name, object_name = object_name)
+            s3_uri = AmazonS3._build_s3_uri(bucket_name = bucket_name, object_name = object_name)
             fs = self._build_s3fs_file_system()
 
             with fs.open(s3_uri, "rb") as file:
                 out_table = pl.read_parquet(file)
-                
+
             return out_table
         else:
             raise ValueError("This method only supports reading parquet tables at this time.")
@@ -71,9 +71,9 @@ class AWS_S3:
         print_full_dict: whether or not to print the full nested dictionary from 
         client.list_objects_v2(Bucket = bucket_name) or just the object names + storage size
         
-        prints all the object names contained in specified bucket
+        prints all the object names in s3 bucket
         '''
-        full_dict = self._create_s3_client().list_objects_v2(Bucket = bucket_name)
+        full_dict = self._create_client("s3").list_objects_v2(Bucket = bucket_name)
         
         if print_full_dict:
             print(full_dict)
@@ -109,7 +109,7 @@ class AWS_S3:
         
         out_buffer.seek(0)
         
-        self._create_s3_client().upload_fileobj(out_buffer, Bucket = bucket_name, Key = object_name)
+        self._create_client("s3").upload_fileobj(out_buffer, Bucket = bucket_name, Key = object_name)
         
     def upload_file_to_s3_bucket(self, 
                                  file: str,
@@ -120,4 +120,4 @@ class AWS_S3:
         
         uploads a file onto an S3 bucket as a file called object_name
         '''
-        self._create_s3_client().upload_file(Filename = file, Bucket = bucket_name, Key = object_name)
+        self._create_client("s3").upload_file(Filename = file, Bucket = bucket_name, Key = object_name)

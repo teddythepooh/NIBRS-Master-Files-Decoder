@@ -1,3 +1,5 @@
+s3_bucket: ted-nibrs
+
 segment_level_codes:
   administrative_segment: '01'
   offense_segment: '02'
