@@ -1,4 +1,5 @@
 sudo apt install git
+sudo apt install unzip
 sudo apt install make
 
 if [[ ! -d ~/miniconda3 ]]; then
