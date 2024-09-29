@@ -2,7 +2,7 @@
 
 ### Requirements
 - Python 3.11.3; `requirements.yaml`
-- AWS S3 bucket
+- (optional) Amazon Ubuntu EC2; Amazon S3 
 
 ### About
 Through the FBI Crime Data Explorer (CDE), the FBI releases National Incident-Based Reporting System (NIBRS) data every year dating back to 1991. These so-called master files are the most comprehensive and centralized resource for *incident-level* public safety data, including but not limited to crime; arrest; and victim segments for over 13,000 law enforcement agencies across the United States. The data is in a fixed-length ASCII text format: every n characters is a distinct column, with the first two characters delineating between the different data segments. There exists one master file per year. The schemas for each segment can be found in the FBI CDE (see the yellow circle in the screenshot below): they are enumerated in a poorly-scanned document from 1995. For 2023, the data for which is to be released some time in fall 2024, the FBI has released the documentation as a proper .pdf entitled "2023.0 NIBRS Technical Specification:" https://le.fbi.gov/informational-tools/ucr/ucr-technical-specifications-user-manuals-and-data-tools. 
@@ -25,27 +25,14 @@ In my pursuit of these goals, I hope to
 ### Project Folder Structure
 1. `src/` is the bread-and-butter of this repo: the scripts in this directory orchestrate the ETL pipeline.
 2. `src/utils/` and `src/db_design/` contain the modules I developed—and continue to refine—to abstract away the core functionalities of `src/`. While `src/utils/` is specifically for the decoder tool and AWS integration features, `src/db_design/` is for all things SQL with and without Python.
-2. `configuration/` is simply where I store configurable parameters as .yaml files, with some of them not visible in this repo if it contains any secrets (e.g., AWS secrets to access my S3 bucket).
+2. `configuration/` is simply where I store configurable parameters as .yaml files.
 3. `fbi_api_wrapper/` *will* be a Python wrapper for the FBI Crime Data API, from which I will extract agency information (e.g., agency name, population, etc.). This is technically available in the NIBRS master files from the so-called batch header segment, but the API exports are orders of magnitude more standardized and reliable. In that regard, the motivation of decoding the NIBRS master file is the fact that their aggregation is at the incident-level; in contrast, the FBI API's smallest aggregation is at the annual agency level.
 
 ### Instructions (for decoder tool only)
 1. In the terminal, clone this repo and navigate to the parent directory (i.e., the same directory as this README).
 1. Download the NIBRS ASCII text file from the FBI CDE, then store it in `raw_data/`; at this point, it should be a zipped file (e.g., `nibrs-2022.zip`) that is around 500 MB in size. You can unzip it, but the bash script below will handle the unzipping if needed. In that regard, it should get unzipped as `${data_year}_NIBRS_NATIONAL_MASTER_FILE_ENC.txt`. Such is the case for all years through 2022, and I presume the same applies to the 2023 master file when it is released in fall 2024.
-2. To send the decoded data to your S3 bucket, create `configuration/private_config.yaml` and make sure that the access keys are from an IAM user with the appropriate credentials. You can invoke them as environment variables, but you would have to make some slight modifications to `src/aws_s3_helper.py`.
-
-```yaml
-# configuration/private_config.yaml
-bucket_name: xxxxx
-
-credentials:
-  region_name: xxxxxx
-  aws_access_key_id: xxxxxxxx
-  aws_secret_access_key: xxxxxxxxxxx
-```
-
-Note that I set up my bash script to send the decoded data directly to my S3 bucket `bucket_name`. However, if you would like to store them locally, delete line 40 in `main.sh` (i.e., the `to_aws_s3` flag) before proceeding.
-
-3. Activate virtual environment from `requirements.yaml`. In the future, I aim to learn Docker because it is a pain to recreate my environment in EC2. EC2 instances currently come with Python 3.9 by default at the time that I am writing this, but I am using Python 3.11.
+2. To send the decoded data to an S3 bucket, as defined in `configuration/col_specs.yaml`, store your secrets as environment variables: `region_name`, `aws_access_key_id`, and `aws_secret_access_key`. Note that I set up my bash script to send the decoded data directly to my S3 bucket. However, if you would like to store them locally, delete line 39 in `main.sh` (i.e., the `to_aws_s3` flag) before proceeding.
+3. Activate virtual environment.
 4. Run `bash main.sh`.
 ![image](https://github.com/teddythepooh/NIBRS-Master-Files-Decoder/blob/aws_integration/images/nibrs_decoder_implementation.png)
 5. The decoded data segments are now in Amazon S3.
