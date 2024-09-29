@@ -3,4 +3,3 @@ logs/
 output/
 test/
 __pycache__/
-private_config.yaml
