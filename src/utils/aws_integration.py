@@ -1,3 +1,4 @@
+import os
 import boto3
 from botocore.client import BaseClient
 from botocore.exceptions import UnknownServiceError
@@ -16,11 +17,14 @@ warnings.filterwarnings(
     )
 
 class AWSBase:
-    def __init__(self, region_name: str, aws_access_key_id: str, aws_secret_access_key: str):
+    def __init__(self, 
+                 region_name: str = os.environ["region_name"], 
+                 aws_access_key_id: str = os.environ["aws_access_key_id"], 
+                 aws_secret_access_key: str = os.environ["aws_secret_access_key"]):
         self.region_name = region_name
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
-        
+
     def _create_credentials_dict(self) -> dict:
         credentials = {
             "region_name": self.region_name,
@@ -38,9 +42,6 @@ class AWSBase:
             raise ValueError(f"Service '{service}' is invalid. AWS client could not be created.")
 
 class AmazonS3(AWSBase):
-    def __init__(self, region_name: str, aws_access_key_id: str, aws_secret_access_key: str):
-        super().__init__(region_name, aws_access_key_id, aws_secret_access_key)
-
     @staticmethod
     def _build_s3_uri(bucket_name: str, object_name: str) -> str:
         return f"s3://{bucket_name}/{object_name}"

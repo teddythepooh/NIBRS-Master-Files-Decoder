@@ -18,10 +18,10 @@ fi
 src=src/
 
 segment_prefixes=(
-    administrative 
-    offense
+    #administrative 
+    #offense
     arrestee
-    victim
+    #victim
 )
 
 nibrs_segments=()
@@ -36,7 +36,7 @@ for segment in ${nibrs_segments[@]}; do
         --nibrs_master_file=$nibrs_mf \
         --config_file=configuration/col_specs.yaml \
         --segment_name=$segment \
-        --to_aws_s3
+        --to_s3
 done
 
 wait
