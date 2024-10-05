@@ -122,7 +122,7 @@ class Postgres:
             
             with self._create_psycopg2_connection() as con:
                 with con.cursor() as cur:
-                    cur.copy_expert(sql = self.construct_copy_sql_code(table_name = sql_table, columns = table_to_ingest.columns), 
+                    cur.copy_expert(sql = Postgres.construct_copy_sql_code(table_name = sql_table, columns = table_to_ingest.columns), 
                                     file = csv_buffer)
             
             con.close()
