@@ -5,7 +5,7 @@ from botocore.exceptions import UnknownServiceError
 import s3fs
 import pandas as pd
 import polars as pl
-from io import BytesIO, StringIO, TextIOWrapper
+from io import BytesIO, StringIO
 
 # https://stackoverflow.com/questions/53416226/how-to-write-parquet-file-from-pandas-dataframe-in-s3-in-python
 # https://stackoverflow.com/questions/75115246/with-python-is-there-a-way-to-load-a-polars-dataframe-directly-into-an-s3-bucke
@@ -48,9 +48,13 @@ class AWSBase:
 
 class AmazonS3asFS(AWSBase):
     '''
+    DEPRECATION NOTICE
+    
     Treats S3 as a file system (FS) using the s3fs package. I originally used this to read my parquet tables in-memory
-    from my S3 bucket, before ingesting them into my postgres db. However, this is apparently relatively slower than other mechanisms.
-    In case I need this in the future (perhaps for doing quick spot checks on my data), I am retaining it for now.
+    from my S3 bucket, before ingesting them into my postgres db. However, there are apparently some issues with this mechanism.
+    
+    Instead, I am currently using the read_parquet_file_from_s3_bucket() method in my AmazonS3 class. It is more
+    elegant and concise.
     '''
     @staticmethod
     def _build_s3_uri(bucket_name: str, object_name: str) -> str:
@@ -100,15 +104,18 @@ class AmazonS3asFS(AWSBase):
             raise FileNotFoundError(f"{object_name} does not exist in {bucket_name} bucket.")
 
 class AmazonS3(AWSBase):
-    def get_objects_in_s3_bucket(self, bucket_name: str, as_view: bool = False) -> list:
+    '''
+    For all methods, assume that 'bucket_name' is the name of the S3 bucket and 'object_name' is the name of the file(s) in said bucket.
+    '''
+    def view_objects_in_s3_bucket(self, bucket_name: str, view_only: bool = False) -> list:
         '''
-        as_view: returns all objects from an s3 bucket as a list if True, otherwise the object names and file sizes
+        view_only: returns all objects from an s3 bucket as a list if True, otherwise the object names and file sizes
         are simply printed
         '''
         full_dict = self._create_client("s3").list_objects_v2(Bucket = bucket_name)
         
         try:
-            if as_view:
+            if view_only:
                 for object in full_dict["Contents"]:
                     file_name = object["Key"]
                     file_size_as_mb = round(object["Size"] / (1000 * 1000), 2)
@@ -142,13 +149,30 @@ class AmazonS3(AWSBase):
         
         self._create_client("s3").upload_fileobj(out_buffer, Bucket = bucket_name, Key = object_name)
         
-    def upload_file_to_s3_bucket(self, 
-                                 file: str,
-                                 bucket_name: str,
-                                 object_name: str) -> None:
+    def upload_file_to_s3_bucket(self, file: str, bucket_name: str, object_name: str) -> None:
         '''
         file: path to file to be uploaded onto an s3 bucket
         
         uploads a file onto an S3 bucket as a file called object_name
         '''
         self._create_client("s3").upload_file(Filename = file, Bucket = bucket_name, Key = object_name)
+        
+    def get_object_attributes_from_s3_bucket(self, bucket_name: str, object_name: str) -> dict:
+        response = self._create_client("s3").get_object(Bucket = bucket_name, Key = object_name)
+        
+        return response
+    
+    def read_parquet_file_from_s3_bucket(self, bucket_name: str, object_name: str, n_rows: int = None) -> pl.DataFrame:
+        '''
+        n_rows: if specified, only the first n_rows of the parquet file is read
+        
+        loads a parquet file in-memory from an s3 bucket
+        '''
+        if object_name.endswith("parquet"):
+            response = self.get_object_attributes_from_s3_bucket(bucket_name = bucket_name, object_name = object_name)
+            
+            out_table = pl.read_parquet(BytesIO(response["Body"].read()), n_rows = n_rows)
+            
+            return out_table
+        else:
+            raise Exception("{object_name} does not end with .parquet.")
