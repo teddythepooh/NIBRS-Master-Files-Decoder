@@ -10,7 +10,7 @@ dependencies:
   - numpy=2.1.1
   - ipykernel=6.29.5
   - boto3=1.35.12
-  - s3fs=2024.9.0
+  - s3fs=2024.9.0 # I no longer use this. Install this into your env if you would like to use my AmazonS3asFS class in src/utils/aws_integration.py.
   - psycopg2=2.9.9
   - sqlalchemy=2.0.34
   - pyarrow=17.0.0
