@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: administrative_segment
+      - name: offense_segment
+      - name: victim_segment
+      - name: arrestee_segment
